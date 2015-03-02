@@ -5,7 +5,7 @@
 // @include     http://www.v2ex.com/*
 // @include     https://v2ex.com/*
 // @include     https://www.v2ex.com/*
-// @version     1.0.0
+// @version     1.0.1
 // @grant       none
 // ==/UserScript==
 
@@ -205,14 +205,14 @@ var v2exMate = {
         var el = $(this)
 
         if (!timeOutThread) {
-	        timeOutThread = setTimeout(function() {
+          timeOutThread = setTimeout(function() {
             v2exMate.loadProfile(el);
           }, 250);
         }
       })
       .on('mouseout', function() {
         if (timeOutThread) {
-	        clearTimeout(timeOutThread);
+          clearTimeout(timeOutThread);
           timeOutThread = null;
         }
         $('.v2exmate-show').removeClass('v2exmate-show');
@@ -227,17 +227,19 @@ var v2exMate = {
       el.addClass('v2exmate-viewed');
 
       var $preview = $('<div id="v2exmate-' + id + '" class="v2exmate-preview v2exmate-show"/>'),
+          $content = $('<div class="v2exmate-preview-inner"/>'),
           top      = el.offset().top,
           left     = el.offset().left,
           width    = el.outerWidth();
 
-      $.getJSON(location.origin + '/api/topics/show.json?id=' + id, function(data) {
-        $preview.html(data[0].content_rendered).css({
-          'top': top,
-          'left': left + width
-        });
+      $preview.css({
+        'top': top,
+        'left': left + width
+      });
 
-        $('body').append($preview);
+      $.getJSON(location.origin + '/api/topics/show.json?id=' + id, function(data) {
+        $content.html(data[0].content_rendered)
+        $('body').append($preview.append($content));
       });
     } else {
       $('#v2exmate-' + id).addClass('v2exmate-show');
@@ -253,14 +255,14 @@ var v2exMate = {
         var el = $(this);
 
         if (!timeOutThread) {
-	        timeOutThread = setTimeout(function() {
+          timeOutThread = setTimeout(function() {
             v2exMate.loadPreview(el);
           }, 250);
         }
       })
       .on('mouseout', function() {
         if (timeOutThread) {
-	        clearTimeout(timeOutThread);
+          clearTimeout(timeOutThread);
           timeOutThread = null;
         }
         $('.v2exmate-show').removeClass('v2exmate-show');

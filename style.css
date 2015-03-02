@@ -11,7 +11,7 @@
   font-size: 13px;
   line-height: 1.5;
   color: #eee;
-  background: rgba(14,10,10,.85);
+  background: rgba(44,40,50,.9);
   border-radius: 2px;
 }
 .v2exmate-show, .v2exmate-profile:hover, .v2exmate-preview:hover {
@@ -26,36 +26,47 @@
 
 .v2exmate-preview {
   max-width: 400px;
+  padding: 0;
   z-index: 50;
+}
+.v2exmate-preview-inner {
+  max-height: 280px;
+  padding: 10px;
+  overflow: auto;
+}
+.v2exmate-preview-inner:after {
+  content: "";
+  display: block;
+  height: 10px;
 }
 
 #v2exmate-quote {
-	position: absolute;
-	z-index: 10;
-	max-width: 400px;
-	margin-left: 6px;
-	padding: 6px 8px 3px;
-	word-break: normal;
-	color: #eee;
-	background: rgba(14,10,10,.85);
-	border-radius: 2px
+  position: absolute;
+  z-index: 10;
+  max-width: 400px;
+  margin-left: 6px;
+  padding: 6px 8px 3px;
+  word-break: normal;
+  color: #eee;
+  background: rgba(44,40,50,.9);
+  border-radius: 2px
 }
 
 .v2exmate-preview img, #v2exmate-quote > img {
-	display: block;
-	width: 100%;
+  display: block;
+  width: 100%;
 }
 .v2exmate-preview:before, #v2exmate-quote:before {
-	content: "";
-	position: absolute;
-	top: 6px;
-	left: -4px;
-	z-index: 100;
-	width: 0;
-	height: 0;
-	border-top: 4px solid transparent;
-	border-bottom: 4px solid transparent;
-	border-right: 4px solid rgba(14,10,10,.85)
+  content: "";
+  position: absolute;
+  top: 6px;
+  left: -4px;
+  z-index: 100;
+  width: 0;
+  height: 0;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  border-right: 4px solid rgba(44,40,50,.9)
 }
 .v2exmate-preview:before {
   top: 4px;
@@ -92,42 +103,42 @@
 
 
 #reply_content {
-	position: fixed;
-	left: 50%;
-	bottom: 0;
-	z-index: 100;
-	width: 850px;
-	margin: 0 0 0 -485px;
-	padding: 10px;
-	color: #eee;
-	background: rgba(14,10,10,.85);
-	border: none;
-	border-radius: 0;
-	resize: vertical !important;
-	transform: translateY(calc(100% - 35px));
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  z-index: 100;
+  width: 850px;
+  margin: 0 0 0 -485px;
+  padding: 10px;
+  color: #eee;
+  background: rgba(44,40,50,.9);
+  border: none;
+  border-radius: 0;
+  resize: vertical !important;
+  transform: translateY(calc(100% - 35px));
 }
 
 #reply_content:focus {
-	transform: translateY(0)
+  transform: translateY(0)
 }
 
 form[action^="/t/"] > .fr {
-	display: none
+  display: none
 }
 
 form[action^="/t/"] > input[type="submit"] {
-	position: fixed;
-	left: 50%;
-	bottom: 0;
-	z-index: 100;
-	margin: 0 0 0 385px;
-	width: 100px;
-	height: 35px;
-	font-size: 14px !important;
-	text-shadow: none !important;
-	color: #fff !important;
-	background: #4ED34A !important;
-	border: none !important;
-	border-radius: 0 !important;
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  z-index: 100;
+  margin: 0 0 0 385px;
+  width: 100px;
+  height: 35px;
+  font-size: 14px !important;
+  text-shadow: none !important;
+  color: #fff !important;
+  background: #4ED34A !important;
+  border: none !important;
+  border-radius: 0 !important;
   outline: none;
 }
