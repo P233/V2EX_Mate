@@ -5,7 +5,7 @@
 // @include     http://www.v2ex.com/*
 // @include     https://v2ex.com/*
 // @include     https://www.v2ex.com/*
-// @version     1.1.0
+// @version     1.1.1
 // @grant       none
 // ==/UserScript==
 
@@ -34,6 +34,8 @@ var v2exMate = {
     var replyMap = $('strong > .dark[href^="/member/"]').map(function(i, el) {
       return $(el).text();
     }).get();
+
+    var timeOutThread;
 
     // 添加楼主
     replyMap.unshift($('.gray > a[href^="/member/"]').text());
@@ -66,9 +68,26 @@ var v2exMate = {
     // 检索用户全部回复
     $('strong > .dark[href^="/member/"]')
       .on('mouseover', function() {
-        var member  = $(this).text(),
-            $quote  = $('<span id="v2exmate-quote"/>'),
-            content = '';
+        var member     = $(this).text(),
+            top        = $(this).offset().top,
+            left       = $(this).offset().left,
+            width      = $(this).outerWidth(),
+            $allReplys = $('<span id="v2exmate-allreplys"/>'),
+            content    = '';
+
+        $allReplys.css({
+          'top': top,
+          'left': left + width
+        })
+        .on('mouseenter', function() {
+          if (timeOutThread) {
+            clearTimeout(timeOutThread);
+            timeOutThread = null;
+          }
+        })
+        .on('mouseleave', function() {
+          $(this).remove();
+        });
 
         // 不包含楼主
         for (var i = 1, j = replyMap.length; i < j; i++) {
@@ -77,10 +96,12 @@ var v2exMate = {
           }
         }
 
-        $(this).append($quote.html(content));
+        $('body').append($allReplys.append($('<div id="v2exmate-allreplys-inner"/>').html(content)));
       })
      .on('mouseout', function() {
-        $('#v2exmate-quote').remove();
+       timeOutThread = setTimeout(function() {
+         $('#v2exmate-allreplys').remove();
+       }, 300);
      });
   },
 
@@ -230,7 +251,7 @@ var v2exMate = {
         if (!timeOutThread) {
           timeOutThread = setTimeout(function() {
             v2exMate.loadProfile(el);
-          }, 250);
+          }, 300);
         }
       })
       .on('mouseout', function() {
@@ -280,7 +301,7 @@ var v2exMate = {
         if (!timeOutThread) {
           timeOutThread = setTimeout(function() {
             v2exMate.loadPreview(el);
-          }, 250);
+          }, 300);
         }
       })
       .on('mouseout', function() {
@@ -296,7 +317,7 @@ var v2exMate = {
 
 // START
 
-$('head').append($('<style/>').text('.v2exmate-z{position:relative;z-index:20;background:#fff;}.v2exmate-profile, .v2exmate-preview{display:none;position:absolute;z-index:10;padding:10px;font-size:13px;line-height:1.5;color:#eee;background:rgba(44,40,50,.9);border-radius:2px;}.v2exmate-show, .v2exmate-profile:hover, .v2exmate-preview:hover{display:block;}.v2exmate-profile>span{display:block;padding-top:5px;line-height:1.3;}.v2exmate-preview{max-width:400px;padding:0;z-index:50;}.v2exmate-preview-inner{max-height:280px;padding:10px 10px 0;overflow:auto;}.v2exmate-preview-inner:after{content:"";display:block;height:10px;}#v2exmate-quote{position:absolute;z-index:10;max-width:400px;margin-left:6px;padding:5px 8px;font-size:12px;font-weight:normal;word-break:normal;color:#eee;background:rgba(44,40,50,.9);border-radius:2px}#v2exmate-quote>strong{display:block;}#v2exmate-quote>hr{margin:10px 0;height:1px;background:rgba(255,255,255,.25);border:none;}#v2exmate-quote>hr:last-of-type{display:none;}.v2exmate-preview img, #v2exmate-quote>img{display:block;width:100%;}.v2exmate-preview:before, #v2exmate-quote:before{content:"";position:absolute;top:6px;left:-4px;z-index:100;width:0;height:0;border-top:4px solid transparent;border-bottom:4px solid transparent;border-right:4px solid rgba(44,40,50,.9)}.v2exmate-preview:before{top:4px;}#v2exmate-overlay{position:absolute;top:0;left:0;right:0;bottom:0;z-index:30;background:linear-gradient(180deg,rgba(255,255,255,1),rgba(255,255,255,0));}#v2exmate-showReplys{position:absolute;top:0;left:0;right:0;bottom:0;z-index:40;width:140px;height:35px;margin:auto;font-size:14px;color:#fff;background:#4ed34a;border:none;border-radius:2px;outline:none;cursor:pointer;}#reply_content{position:fixed;left:50%;bottom:0;z-index:100;width:850px;margin:0 0 0 -485px;padding:10px;color:#eee;background:rgba(44,40,50,.9);border:none;border-radius:0;resize:vertical!important;transform:translateY(calc(100% - 35px));}#reply_content:focus{transform:translateY(0)}form[action^="/t/"]>.fr{display:none}form[action^="/t/"]>input[type="submit"]{position:fixed;left:50%;bottom:0;z-index:100;margin:0 0 0 385px;width:100px;height:35px;font-size:14px!important;text-shadow:none!important;color:#fff!important;background:#4ED34A!important;border:none!important;border-radius:0!important;outline:none;}'));
+$('head').append($('<style/>').text('.v2exmate-z{position:relative;z-index:20;background:#fff;}.v2exmate-profile, .v2exmate-preview{display:none;position:absolute;z-index:10;padding:10px;font-size:13px;line-height:1.5;color:#eee;background:rgba(44,40,50,.9);border-radius:2px;}.v2exmate-show, .v2exmate-profile:hover, .v2exmate-preview:hover{display:block;}.v2exmate-profile>span{display:block;padding-top:5px;line-height:1.3;}.v2exmate-preview{max-width:400px;padding:0;z-index:50;}.v2exmate-preview-inner, #v2exmate-allreplys-inner{max-height:280px;padding:10px 10px 0;overflow:auto;}.v2exmate-preview-inner:after, #v2exmate-allreplys-inner:after{content:"";display:block;height:10px;}#v2exmate-allreplys-inner>hr{margin:10px 0;height:1px;background:rgba(255,255,255,.25);border:none;}#v2exmate-allreplys-inner>hr:last-of-type{display:none;}#v2exmate-quote, #v2exmate-allreplys{position:absolute;z-index:10;max-width:400px;margin-left:6px;padding:5px 8px;font-size:13px;font-weight:normal;word-break:normal;color:#eee;background:rgba(44,40,50,.9);border-radius:2px}#v2exmate-allreplys{padding:0;}#v2exmate-allreplys-inner>strong, #v2exmate-quote>strong{display:block;}.v2exmate-preview-inner img, #v2exmate-quote>img, #v2exmate-allreplys-inner img{display:block;width:100%;}.v2exmate-preview:before, #v2exmate-quote:before, #v2exmate-allreplys:before{content:"";position:absolute;top:6px;left:-4px;z-index:100;width:0;height:0;border-top:4px solid transparent;border-bottom:4px solid transparent;border-right:4px solid rgba(44,40,50,.9)}.v2exmate-preview:before {top:4px;}#v2exmate-allreplys:before{top:3px;}#v2exmate-overlay{position:absolute;top:0;left:0;right:0;bottom:0;z-index:30;background:linear-gradient(180deg,rgba(255,255,255,1),rgba(255,255,255,0));}#v2exmate-showReplys{position:absolute;top:0;left:0;right:0;bottom:0;z-index:40;width:140px;height:35px;margin:auto;font-size:14px;color:#fff;background:#4ed34a;border:none;border-radius:2px;outline:none;cursor:pointer;}#reply_content{position:fixed;left:50%;bottom:0;z-index:100;width:850px;margin:0 0 0 -485px;padding:10px;color:#eee;background:rgba(44,40,50,.9);border:none;border-radius:0;resize:vertical!important;transform:translateY(calc(100% - 35px));}#reply_content:focus{transform:translateY(0)}form[action^="/t/"]>.fr{display:none}form[action^="/t/"]>input[type="submit"]{position:fixed;left:50%;bottom:0;z-index:100;margin:0 0 0 385px;width:100px;height:35px;font-size:14px!important;text-shadow:none!important;color:#fff!important;background:#4ED34A!important;border:none!important;border-radius:0!important;outline:none;}'));
 
 if (location.pathname.match(/\/t\/\d+/)) {
   v2exMate.visited();

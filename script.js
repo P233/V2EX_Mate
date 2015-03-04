@@ -5,7 +5,7 @@
 // @include     http://www.v2ex.com/*
 // @include     https://v2ex.com/*
 // @include     https://www.v2ex.com/*
-// @version     1.1.0
+// @version     1.1.1
 // @grant       none
 // ==/UserScript==
 
@@ -34,6 +34,8 @@ var v2exMate = {
     var replyMap = $('strong > .dark[href^="/member/"]').map(function(i, el) {
       return $(el).text();
     }).get();
+
+    var timeOutThread;
 
     // 添加楼主
     replyMap.unshift($('.gray > a[href^="/member/"]').text());
@@ -66,9 +68,26 @@ var v2exMate = {
     // 检索用户全部回复
     $('strong > .dark[href^="/member/"]')
       .on('mouseover', function() {
-        var member  = $(this).text(),
-            $quote  = $('<span id="v2exmate-quote"/>'),
-            content = '';
+        var member     = $(this).text(),
+            top        = $(this).offset().top,
+            left       = $(this).offset().left,
+            width      = $(this).outerWidth(),
+            $allReplys = $('<span id="v2exmate-allreplys"/>'),
+            content    = '';
+
+        $allReplys.css({
+          'top': top,
+          'left': left + width
+        })
+        .on('mouseenter', function() {
+          if (timeOutThread) {
+            clearTimeout(timeOutThread);
+            timeOutThread = null;
+          }
+        })
+        .on('mouseleave', function() {
+          $(this).remove();
+        });
 
         // 不包含楼主
         for (var i = 1, j = replyMap.length; i < j; i++) {
@@ -77,10 +96,12 @@ var v2exMate = {
           }
         }
 
-        $(this).append($quote.html(content));
+        $('body').append($allReplys.append($('<div id="v2exmate-allreplys-inner"/>').html(content)));
       })
      .on('mouseout', function() {
-        $('#v2exmate-quote').remove();
+       timeOutThread = setTimeout(function() {
+         $('#v2exmate-allreplys').remove();
+       }, 300);
      });
   },
 
@@ -230,7 +251,7 @@ var v2exMate = {
         if (!timeOutThread) {
           timeOutThread = setTimeout(function() {
             v2exMate.loadProfile(el);
-          }, 250);
+          }, 300);
         }
       })
       .on('mouseout', function() {
@@ -280,7 +301,7 @@ var v2exMate = {
         if (!timeOutThread) {
           timeOutThread = setTimeout(function() {
             v2exMate.loadPreview(el);
-          }, 250);
+          }, 300);
         }
       })
       .on('mouseout', function() {

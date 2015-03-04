@@ -29,48 +29,53 @@
   padding: 0;
   z-index: 50;
 }
-.v2exmate-preview-inner {
+.v2exmate-preview-inner, #v2exmate-allreplys-inner {
   max-height: 280px;
   padding: 10px 10px 0;
   overflow: auto;
 }
-.v2exmate-preview-inner:after {
+.v2exmate-preview-inner:after, #v2exmate-allreplys-inner:after {
   content: "";
   display: block;
   height: 10px;
 }
 
-#v2exmate-quote {
+#v2exmate-allreplys-inner > hr {
+  margin: 10px 0;
+  height: 1px;
+  background: rgba(255,255,255,.25);
+  border: none;
+}
+#v2exmate-allreplys-inner > hr:last-of-type {
+  display: none;
+}
+
+#v2exmate-quote, #v2exmate-allreplys {
   position: absolute;
   z-index: 10;
   max-width: 400px;
   margin-left: 6px;
   padding: 5px 8px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: normal;
   word-break: normal;
   color: #eee;
   background: rgba(44,40,50,.9);
   border-radius: 2px
 }
-#v2exmate-quote > strong {
+
+#v2exmate-allreplys {
+  padding: 0;
+}
+#v2exmate-allreplys-inner > strong, #v2exmate-quote > strong {
   display: block;
 }
-#v2exmate-quote > hr {
-  margin: 10px 0;
-  height: 1px;
-  background: rgba(255,255,255,.25);
-  border: none;
-}
-#v2exmate-quote > hr:last-of-type {
-  display: none;
-}
 
-.v2exmate-preview img, #v2exmate-quote > img {
+.v2exmate-preview-inner img, #v2exmate-quote > img, #v2exmate-allreplys-inner img {
   display: block;
   width: 100%;
 }
-.v2exmate-preview:before, #v2exmate-quote:before {
+.v2exmate-preview:before, #v2exmate-quote:before, #v2exmate-allreplys:before {
   content: "";
   position: absolute;
   top: 6px;
@@ -82,10 +87,12 @@
   border-bottom: 4px solid transparent;
   border-right: 4px solid rgba(44,40,50,.9)
 }
-.v2exmate-preview:before {
+.v2exmate-preview:before  {
   top: 4px;
 }
-
+#v2exmate-allreplys:before {
+  top: 3px;
+}
 
 #v2exmate-overlay {
   position: absolute;
