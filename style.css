@@ -31,7 +31,7 @@
 }
 .v2exmate-preview-inner {
   max-height: 280px;
-  padding: 10px;
+  padding: 10px 10px 0;
   overflow: auto;
 }
 .v2exmate-preview-inner:after {
@@ -45,11 +45,25 @@
   z-index: 10;
   max-width: 400px;
   margin-left: 6px;
-  padding: 6px 8px 3px;
+  padding: 5px 8px;
+  font-size: 12px;
+  font-weight: normal;
   word-break: normal;
   color: #eee;
   background: rgba(44,40,50,.9);
   border-radius: 2px
+}
+#v2exmate-quote > strong {
+  display: block;
+}
+#v2exmate-quote > hr {
+  margin: 10px 0;
+  height: 1px;
+  background: rgba(255,255,255,.25);
+  border: none;
+}
+#v2exmate-quote > hr:last-of-type {
+  display: none;
 }
 
 .v2exmate-preview img, #v2exmate-quote > img {

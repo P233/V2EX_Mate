@@ -5,7 +5,7 @@
 // @include     http://www.v2ex.com/*
 // @include     https://v2ex.com/*
 // @include     https://www.v2ex.com/*
-// @version     1.0.1
+// @version     1.1.0
 // @grant       none
 // ==/UserScript==
 
@@ -14,9 +14,6 @@ var block = /盗版|能上了/;
 
 var highlight = /分享/;
 
-
-// GreaseMonkey 使用 unsafeWindow.localStorage
-var localStorage = (typeof unsafeWindow === 'undefined') ? window.localStorage : unsafeWindow.localStorage;
 
 var v2exMate = {
 
@@ -41,6 +38,8 @@ var v2exMate = {
     // 添加楼主
     replyMap.unshift($('.gray > a[href^="/member/"]').text());
 
+
+    // 检索 @ 回复
     $('.reply_content > a[href^="/member/"]')
       .on('mouseover', function() {
         var member  = $(this).text(),
@@ -54,7 +53,7 @@ var v2exMate = {
         } else if (target == 0) {
           content = '@楼主';
         } else {
-          content = $('.reply_content').eq(target - 1).html();
+          content = '<strong>#' + target + '</strong>' + $('.reply_content').eq(target - 1).html();
         }
 
         $(this).append($quote.html(content));
@@ -62,6 +61,27 @@ var v2exMate = {
       .on('mouseout', function() {
         $('#v2exmate-quote').remove();
       });
+
+
+    // 检索用户全部回复
+    $('strong > .dark[href^="/member/"]')
+      .on('mouseover', function() {
+        var member  = $(this).text(),
+            $quote  = $('<span id="v2exmate-quote"/>'),
+            content = '';
+
+        // 不包含楼主
+        for (var i = 1, j = replyMap.length; i < j; i++) {
+          if (replyMap[i] == member) {
+            content += '<strong>#' + i + '</strong>' + $('.reply_content').eq(i - 1).html() + '<hr/>';
+          }
+        }
+
+        $(this).append($quote.html(content));
+      })
+     .on('mouseout', function() {
+        $('#v2exmate-quote').remove();
+     });
   },
 
 
@@ -74,6 +94,9 @@ var v2exMate = {
 
 
   visited: function() {
+    // GreaseMonkey 使用 unsafeWindow.localStorage
+    var localStorage = (typeof unsafeWindow === 'undefined') ? window.localStorage : unsafeWindow.localStorage;
+
     var thread      = location.pathname.match(/\d{4,}/)[0],
         threadArray = JSON.parse(localStorage['thread'] || '[]'),
         replyArray  = JSON.parse(localStorage['reply']  || '[]'),

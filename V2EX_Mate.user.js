@@ -5,7 +5,7 @@
 // @include     http://www.v2ex.com/*
 // @include     https://v2ex.com/*
 // @include     https://www.v2ex.com/*
-// @version     1.0.1
+// @version     1.1.0
 // @grant       none
 // ==/UserScript==
 
@@ -14,9 +14,6 @@ var block = /盗版|能上了/;
 
 var highlight = /分享/;
 
-
-// GreaseMonkey 使用 unsafeWindow.localStorage
-var localStorage = (typeof unsafeWindow === 'undefined') ? window.localStorage : unsafeWindow.localStorage;
 
 var v2exMate = {
 
@@ -41,6 +38,8 @@ var v2exMate = {
     // 添加楼主
     replyMap.unshift($('.gray > a[href^="/member/"]').text());
 
+
+    // 检索 @ 回复
     $('.reply_content > a[href^="/member/"]')
       .on('mouseover', function() {
         var member  = $(this).text(),
@@ -54,7 +53,7 @@ var v2exMate = {
         } else if (target == 0) {
           content = '@楼主';
         } else {
-          content = $('.reply_content').eq(target - 1).html();
+          content = '<strong>#' + target + '</strong>' + $('.reply_content').eq(target - 1).html();
         }
 
         $(this).append($quote.html(content));
@@ -62,6 +61,27 @@ var v2exMate = {
       .on('mouseout', function() {
         $('#v2exmate-quote').remove();
       });
+
+
+    // 检索用户全部回复
+    $('strong > .dark[href^="/member/"]')
+      .on('mouseover', function() {
+        var member  = $(this).text(),
+            $quote  = $('<span id="v2exmate-quote"/>'),
+            content = '';
+
+        // 不包含楼主
+        for (var i = 1, j = replyMap.length; i < j; i++) {
+          if (replyMap[i] == member) {
+            content += '<strong>#' + i + '</strong>' + $('.reply_content').eq(i - 1).html() + '<hr/>';
+          }
+        }
+
+        $(this).append($quote.html(content));
+      })
+     .on('mouseout', function() {
+        $('#v2exmate-quote').remove();
+     });
   },
 
 
@@ -74,6 +94,9 @@ var v2exMate = {
 
 
   visited: function() {
+    // GreaseMonkey 使用 unsafeWindow.localStorage
+    var localStorage = (typeof unsafeWindow === 'undefined') ? window.localStorage : unsafeWindow.localStorage;
+
     var thread      = location.pathname.match(/\d{4,}/)[0],
         threadArray = JSON.parse(localStorage['thread'] || '[]'),
         replyArray  = JSON.parse(localStorage['reply']  || '[]'),
@@ -273,7 +296,7 @@ var v2exMate = {
 
 // START
 
-$('head').append($('<style/>').text('.v2exmate-z{position:relative;z-index:20;background:#fff;}.v2exmate-profile, .v2exmate-preview{display:none;position:absolute;z-index:10;padding:10px;font-size:13px;line-height:1.5;color:#eee;background:rgba(44,40,50,.9);border-radius:2px;}.v2exmate-show, .v2exmate-profile:hover, .v2exmate-preview:hover{display:block;}.v2exmate-profile>span{display:block;padding-top:5px;line-height:1.3;}.v2exmate-preview{max-width:400px;padding:0;z-index:50;}.v2exmate-preview-inner{max-height:280px;padding:10px;overflow:auto;}.v2exmate-preview-inner:after{content:"";display:block;height:10px;}#v2exmate-quote{position:absolute;z-index:10;max-width:400px;margin-left:6px;padding:6px 8px 3px;word-break:normal;color:#eee;background:rgba(44,40,50,.9);border-radius:2px}.v2exmate-preview img, #v2exmate-quote>img{display:block;width:100%;}.v2exmate-preview:before, #v2exmate-quote:before{content:"";position:absolute;top:6px;left:-4px;z-index:100;width:0;height:0;border-top:4px solid transparent;border-bottom:4px solid transparent;border-right:4px solid rgba(44,40,50,.9)}.v2exmate-preview:before{top:4px;}#v2exmate-overlay{position:absolute;top:0;left:0;right:0;bottom:0;z-index:30;background:linear-gradient(180deg,rgba(255,255,255,1),rgba(255,255,255,0));}#v2exmate-showReplys{position:absolute;top:0;left:0;right:0;bottom:0;z-index:40;width:140px;height:35px;margin:auto;font-size:14px;color:#fff;background:#4ed34a;border:none;border-radius:2px;outline:none;cursor:pointer;}#reply_content{position:fixed;left:50%;bottom:0;z-index:100;width:850px;margin:0 0 0 -485px;padding:10px;color:#eee;background:rgba(44,40,50,.9);border:none;border-radius:0;resize:vertical!important;transform:translateY(calc(100% - 35px));}#reply_content:focus{transform:translateY(0)}form[action^="/t/"]>.fr{display:none}form[action^="/t/"]>input[type="submit"]{position:fixed;left:50%;bottom:0;z-index:100;margin:0 0 0 385px;width:100px;height:35px;font-size:14px!important;text-shadow:none!important;color:#fff!important;background:#4ED34A!important;border:none!important;border-radius:0!important;outline:none;}'));
+$('head').append($('<style/>').text('.v2exmate-z{position:relative;z-index:20;background:#fff;}.v2exmate-profile, .v2exmate-preview{display:none;position:absolute;z-index:10;padding:10px;font-size:13px;line-height:1.5;color:#eee;background:rgba(44,40,50,.9);border-radius:2px;}.v2exmate-show, .v2exmate-profile:hover, .v2exmate-preview:hover{display:block;}.v2exmate-profile>span{display:block;padding-top:5px;line-height:1.3;}.v2exmate-preview{max-width:400px;padding:0;z-index:50;}.v2exmate-preview-inner{max-height:280px;padding:10px 10px 0;overflow:auto;}.v2exmate-preview-inner:after{content:"";display:block;height:10px;}#v2exmate-quote{position:absolute;z-index:10;max-width:400px;margin-left:6px;padding:5px 8px;font-size:12px;font-weight:normal;word-break:normal;color:#eee;background:rgba(44,40,50,.9);border-radius:2px}#v2exmate-quote>strong{display:block;}#v2exmate-quote>hr{margin:10px 0;height:1px;background:rgba(255,255,255,.25);border:none;}#v2exmate-quote>hr:last-of-type{display:none;}.v2exmate-preview img, #v2exmate-quote>img{display:block;width:100%;}.v2exmate-preview:before, #v2exmate-quote:before{content:"";position:absolute;top:6px;left:-4px;z-index:100;width:0;height:0;border-top:4px solid transparent;border-bottom:4px solid transparent;border-right:4px solid rgba(44,40,50,.9)}.v2exmate-preview:before{top:4px;}#v2exmate-overlay{position:absolute;top:0;left:0;right:0;bottom:0;z-index:30;background:linear-gradient(180deg,rgba(255,255,255,1),rgba(255,255,255,0));}#v2exmate-showReplys{position:absolute;top:0;left:0;right:0;bottom:0;z-index:40;width:140px;height:35px;margin:auto;font-size:14px;color:#fff;background:#4ed34a;border:none;border-radius:2px;outline:none;cursor:pointer;}#reply_content{position:fixed;left:50%;bottom:0;z-index:100;width:850px;margin:0 0 0 -485px;padding:10px;color:#eee;background:rgba(44,40,50,.9);border:none;border-radius:0;resize:vertical!important;transform:translateY(calc(100% - 35px));}#reply_content:focus{transform:translateY(0)}form[action^="/t/"]>.fr{display:none}form[action^="/t/"]>input[type="submit"]{position:fixed;left:50%;bottom:0;z-index:100;margin:0 0 0 385px;width:100px;height:35px;font-size:14px!important;text-shadow:none!important;color:#fff!important;background:#4ED34A!important;border:none!important;border-radius:0!important;outline:none;}'));
 
 if (location.pathname.match(/\/t\/\d+/)) {
   v2exMate.visited();
